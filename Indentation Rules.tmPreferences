@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plist version="1.0">
+<dict>
+	<key>scope</key>
+	<string>text.html.basic.liquid</string>
+	<key>settings</key>
+	<dict>
+		<key>decreaseIndentPattern</key>
+		<string><![CDATA[(?x)
+			# the beginning of the line followed by any amount of whitespace
+			# a valid HTML close tag except "html"
+			  ^[^<>]*+ </ (?!html[\t\n\f /<>])[^\t\n\f /<>]+ [^>]* >
+			| ^[\t\n\f ]*+
+			(	
+				{%\s?(end|else)
+				# closing comment punctuation, optionally preceded by an end "comment selector"
+				|  (<!\[ .*? \])?-->
+				# closing directive/section punctuation
+				| [?%]>
+			)
+		]]></string>
+		<key>increaseIndentPattern</key>
+		<string><![CDATA[(?x)
+			# the beginning of the line followed by any amount of whitespace
+			^.* (
+				{%\s?(if|for|un|else)(?!.*{%\s?end)
+				# a valid non-self-closing HTML tag that doesn't close itself on the same line
+				| <(?!
+					  !--      # no comment
+					| [?%]     # no preprocessor section like PHP/ASP
+					| !DOCTYPE # no document type
+					| (?i:area|base|br|col|frame|hr|html|img|input|link|meta|param)[\t\n\f /<>]
+				)(?:
+					# tag name
+					(?<html_tag>[^\t\n\f /<>]+)
+					# not self closing
+					(?:(?!/>)[^>])* >
+					# not closing in the same line
+					(?! .* </\k<html_tag>)
+				)
+				# comments that don't close themselves on the same line
+				| <!--(?!.*?-->)
+				# directives that don't close themselves on the same line
+				| <\?(?!.*?\?>)
+				# sections that don't close themselves on the same line
+				| <\%(?!.*?\%>)
+			)
+		]]></string>
+	</dict>
+</dict>
+</plist>
